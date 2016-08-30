@@ -675,7 +675,7 @@ int main(int argc, char **argv)
 	char used_opt_search[3];
 	used_opt_search[1] = ':';
 	used_opt_search[2] = '\0';
-	static const char optstring[] = "b:dhm:n:o:p:qs:vV";
+	static const char optstring[] = "b:dhm:n:o:p:qs:v";
 	int opt;
 	while((opt = getopt(argc, argv, optstring)) != -1)
 	{
