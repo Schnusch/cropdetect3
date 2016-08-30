@@ -664,8 +664,9 @@ int main(int argc, char **argv)
 	unsigned int   modulo = 16;
 	unsigned int   npos   = 100;
 	unsigned int   num    = 1;
-	int idx     = -1;
-	int verbose = 0;
+	int idx       = -1;
+	int verbose   = 0;
+	int handbrake = 0;
 #ifdef ENABLE_OUTPUT
 	const char *outname  = NULL;
 	const char *outcodec = "libvpx-vp9";
@@ -675,7 +676,7 @@ int main(int argc, char **argv)
 	char used_opt_search[3];
 	used_opt_search[1] = ':';
 	used_opt_search[2] = '\0';
-	static const char optstring[] = "b:dhm:n:o:p:qs:v";
+	static const char optstring[] = "Hb:dhm:n:o:p:qs:v";
 	int opt;
 	while((opt = getopt(argc, argv, optstring)) != -1)
 	{
@@ -704,6 +705,7 @@ int main(int argc, char **argv)
 #ifdef ENABLE_OUTPUT
 "  -d        use lossless libschroedinger instead of vp9 as output encoder\n"
 #endif
+"  -H        use HandBrake's crop format\n"
 "  -h        display this help\n"
 "  -mMODULO  round dimensions to the next bigger multiple of MODULO\n"
 "            (by default 16)\n"
@@ -731,6 +733,9 @@ int main(int argc, char **argv)
 			return 2;
 #endif
 
+		case 'H':
+			handbrake = 1;
+			break;
 		case 'q':
 			av_log_set_callback(&log_suppress_cropdetect);
 			break;
@@ -1045,7 +1050,10 @@ int main(int argc, char **argv)
 	round_crop(&x, &w, dec_ctx->width,  modulo);
 	round_crop(&y, &h, dec_ctx->height, modulo);
 
-	printf("%d:%d:%d:%d\n", w, h, x, y);
+	if(handbrake)
+		printf("%d:%d:%d:%d\n", y, dec_ctx->height - h - y, x, dec_ctx->width - w - x);
+	else
+		printf("%d:%d:%d:%d\n", w, h, x, y);
 
 end:
 #ifdef ENABLE_STATISTICS
